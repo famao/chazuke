@@ -4,6 +4,7 @@ Gohan.UserModel = Backbone.Model.extend({
   },
   initialize: function(options) {
     this.url = options.url;
+    this.version = options.version;
   },
   parse: function(data) {
     this.setAuthData(data);
@@ -17,7 +18,7 @@ Gohan.UserModel = Backbone.Model.extend({
     };
     Backbone.sync(method, model, options);
   },
-  saveAuth: function(id, password, tenant, domain) {
+  saveAuthV2: function(id, password, tenant, domain) {
     var auth_data = {
       'auth': {
         'passwordCredentials': {
@@ -35,6 +36,38 @@ Gohan.UserModel = Backbone.Model.extend({
        data: JSON.stringify(auth_data),
        error: Gohan.error
     });
+  },
+  saveAuthV3: function(id, password, tenant, domain) {
+    var auth_data = {
+       'auth' : {
+         'identity' : {
+            'methods' : ['password'],
+            "password" : {
+               "user" : id,
+               "domain" : { "name" : domain },
+               "password" : password
+            }
+         }
+       },
+       'scope' : {
+          'project' :  {
+            'name' : tenant,
+            'domain' : { "name" : domain }
+          }
+       }
+    };
+    this.save(auth_data, {
+       wait: true,
+       data: JSON.stringify(auth_data),
+       error: Gohan.error
+    });
+  },
+  saveAuth: function(id, password, tenant, domain) {
+    if (this.version == "v3") {
+       this.saveAuthV3(id, password, tenant, domain);
+    } else {
+       this.saveAuthV2(id, password, tenant, domain);
+    }
   },
   setAuthData: function(data) {
     var MAX_COOKIE_LENGTH = 2000;

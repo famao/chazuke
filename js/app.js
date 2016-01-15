@@ -55,7 +55,8 @@
 
         if(_.isUndefined(self.userModel)){
           self.userModel = new Gohan.UserModel({
-            url: self.config.auth_url + "/tokens"
+            url: self.config.auth_url + "/tokens",
+            version: self.config.auth_version
           });
         }
 
