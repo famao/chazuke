@@ -211,7 +211,8 @@
       },
       login: function(){
         var loginView = new Gohan.LoginView({
-          model: this.userModel
+          model: this.userModel,
+          config: this.config
         });
         this.$el.html(loginView.render().el);
       },

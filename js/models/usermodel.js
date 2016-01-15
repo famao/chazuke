@@ -17,7 +17,7 @@ Gohan.UserModel = Backbone.Model.extend({
     };
     Backbone.sync(method, model, options);
   },
-  saveAuth: function(id, password, tenant) {
+  saveAuth: function(id, password, tenant, domain) {
     var auth_data = {
       'auth': {
         'passwordCredentials': {
@@ -27,6 +27,9 @@ Gohan.UserModel = Backbone.Model.extend({
         'tenantName': tenant
       }
     };
+    if (domain != '') {
+        auth_data.auth['domainName'] =  domain;
+    }
     this.save(auth_data, {
        wait: true,
        data: JSON.stringify(auth_data),
@@ -39,7 +42,9 @@ Gohan.UserModel = Backbone.Model.extend({
       var token = data.access.token.id;
       var tenant_name = data.access.token.tenant.name;
       var user_name = data.access.user.name;
+      var domain_name = data.access.token.domain.name;
       $.cookie('tenant_name', tenant_name);
+      $.cookie('domain_name', domain_name);
       $.cookie('user_name', user_name);
       $.cookie('auth_data1', token.slice(0, MAX_COOKIE_LENGTH));
       $.cookie('auth_data2', token.slice(MAX_COOKIE_LENGTH));
@@ -60,6 +65,9 @@ Gohan.UserModel = Backbone.Model.extend({
   },
   userName: function() {
     return $.cookie('user_name');
+  },
+  domainName: function() {
+    return $.cookie('domain_name');
   },
   unsetAuthData: function() {
     this.setAuthData(undefined);

@@ -18,7 +18,8 @@ Gohan.HeaderView = Backbone.View.extend({
       config: this.config,
       username: this.model.userName(),
       auth_token: this.model.authToken(),
-      tenant_name: this.model.tenantName()
+      tenant_name: this.model.tenantName(),
+      domain_name: this.model.domainName()
     }));
     return this;
   },
